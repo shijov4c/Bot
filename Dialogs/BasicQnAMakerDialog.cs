@@ -17,7 +17,7 @@ namespace Microsoft.Bot.Sample.QnABot
 			var qnaSubscriptionKey = Utils.GetAppSetting("QnASubscriptionKey");
 			var qnaKBId = Utils.GetAppSetting("QnAKnowledgebaseId");
 
-			if (!string.IsNullOrEmpty(qnaSubscriptionKey) && !string.IsNullOrEmpty(qnaKBId))
+			if (string.IsNullOrEmpty(qnaSubscriptionKey) || string.IsNullOrEmpty(qnaKBId))
 			{
 				await context.PostAsync("Please set up the QnASubscriptionKey and QnAKnowledgebaseId in the app settings");
 			}
