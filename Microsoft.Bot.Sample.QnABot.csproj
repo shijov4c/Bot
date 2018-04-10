@@ -200,6 +200,7 @@
     </Compile>
     <Compile Include="Models\ImageMapper.cs" />
     <Compile Include="Models\SearchHit.cs" />
+    <Compile Include="Models\Yahoo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

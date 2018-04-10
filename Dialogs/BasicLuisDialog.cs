@@ -72,9 +72,10 @@ namespace QnABot.Dialogs
 		{
 			if (result.TopScoringIntent.Score < 0.5)
 			{
-				var faqDialog = new BasicQnAMakerDialog();
-				var messageToForward = await message;
-				await context.Forward(faqDialog, AfterFAQDialog, messageToForward, CancellationToken.None);
+				string strRet = await QnABot.Models.Yahoo.GetStock("msft");
+
+				// return our reply to the user
+				await context.PostAsync($"Price for msft is {strRet}");
 			}
 			else
 			{
