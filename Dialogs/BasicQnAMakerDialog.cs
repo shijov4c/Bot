@@ -12,33 +12,29 @@ namespace Microsoft.Bot.Sample.QnABot
     [Serializable]
     public class RootDialog :  IDialog<object>
     {
-        public async Task StartAsync(IDialogContext context)
-        {
-            /* Wait until the first message is received from the conversation and call MessageReceviedAsync 
-            *  to process that message. */
-            context.Wait(this.MessageReceivedAsync);
-        }
+		public async Task StartAsync(IDialogContext context)
+		{
+			var qnaSubscriptionKey = Utils.GetAppSetting("QnASubscriptionKey");
+			var qnaKBId = Utils.GetAppSetting("QnAKnowledgebaseId");
 
-        private async Task MessageReceivedAsync(IDialogContext context, IAwaitable<IMessageActivity> result)
-        {
-            /* When MessageReceivedAsync is called, it's passed an IAwaitable<IMessageActivity>. To get the message,
+			if (!string.IsNullOrEmpty(qnaSubscriptionKey) && !string.IsNullOrEmpty(qnaKBId))
+			{
+				await context.PostAsync("Please set up the QnASubscriptionKey and QnAKnowledgebaseId in the app settings");
+			}
+			/* Wait until the first message is received from the conversation and call MessageReceviedAsync 
+			*  to process that message. */
+			context.Wait(this.MessageReceivedAsync);
+		}
+
+		private async Task MessageReceivedAsync(IDialogContext context, IAwaitable<IMessageActivity> result)
+		{
+			/* When MessageReceivedAsync is called, it's passed an IAwaitable<IMessageActivity>. To get the message,
             *  await the result. */
-            var message = await result;
-            
-            var qnaSubscriptionKey = Utils.GetAppSetting("QnASubscriptionKey");
-            var qnaKBId = Utils.GetAppSetting("QnAKnowledgebaseId");
+			var message = await result;
 
-            // QnA Subscription Key and KnowledgeBase Id null verification
-            if (!string.IsNullOrEmpty(qnaSubscriptionKey) && !string.IsNullOrEmpty(qnaKBId))
-            {
-                await context.Forward(new BasicQnAMakerDialog(), AfterAnswerAsync, message, CancellationToken.None);
-            }
-            else
-            {
-                await context.PostAsync("Please set QnAKnowledgebaseId and QnASubscriptionKey in App Settings. Get them at https://qnamaker.ai.");
-            }
-            
-        }
+			await context.Forward(new BasicQnAMakerDialog(), AfterAnswerAsync, message, CancellationToken.None);
+
+		}
 
         private async Task AfterAnswerAsync(IDialogContext context, IAwaitable<IMessageActivity> result)
         {
