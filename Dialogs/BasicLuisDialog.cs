@@ -39,6 +39,7 @@ namespace QnABot.Dialogs
 				var messageToForward = await message;
 				await context.Forward(faqDialog, AfterFAQDialog, messageToForward, CancellationToken.None);
 			}
+			context.Wait(MessageReceived);
 		}
 
 		// Go to https://luis.ai and create a new intent, then train/publish your luis app.
@@ -46,7 +47,8 @@ namespace QnABot.Dialogs
 		[LuisIntent("Greeting")]
 		public async Task GreetingIntent(IDialogContext context, LuisResult result)
 		{
-			await this.ShowLuisResult(context, result);
+			await context.PostAsync($"Hello!! How can I help you?");
+			context.Wait(MessageReceived);
 		}
 
 		[LuisIntent("Cancel")]
@@ -73,16 +75,13 @@ namespace QnABot.Dialogs
 		[LuisIntent("StockPrice")]
 		public async Task StockPriceIntent(IDialogContext context, IAwaitable<IMessageActivity> message, LuisResult result)
 		{
-			if (result.TopScoringIntent.Score < 0.5)
+			if (result.TopScoringIntent.Score > 0.5)
 			{
 				string entityValue = "";
 				if (result.Entities.Count > 0)
 				{
 					foreach (EntityRecommendation item in result.Entities)
 					{
-						// Query: Turn on the [light]
-						// item.Type = "HomeAutomation.Device"
-						// item.Entity = "light"
 						entityValue = item.Entity;
 					}
 				}
@@ -90,10 +89,12 @@ namespace QnABot.Dialogs
 
 				// return our reply to the user
 				await context.PostAsync($"Price for {entityValue} is {strRet}");
+				context.Wait(MessageReceived);
 			}
 			else
 			{
 				await this.ShowLuisResult(context, result);
+				context.Wait(MessageReceived);
 			}
 		}
 
