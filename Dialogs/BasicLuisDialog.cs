@@ -45,9 +45,18 @@ namespace QnABot.Dialogs
 		}
 
 		[LuisIntent("Help")]
-		public async Task HelpIntent(IDialogContext context, LuisResult result)
+		public async Task HelpIntent(IDialogContext context, IAwaitable<IMessageActivity> message, LuisResult result)
 		{
-			await this.ShowLuisResult(context, result);
+			if (result.TopScoringIntent.Score < 0.5)
+			{
+				var faqDialog = new BasicQnAMakerDialog();
+				var messageToForward = await message;
+				await context.Forward(faqDialog, AfterFAQDialog, messageToForward, CancellationToken.None);
+			}
+			else
+			{
+				await this.ShowLuisResult(context, result);
+			}
 		}
 
 		[LuisIntent("StockPrice")]
