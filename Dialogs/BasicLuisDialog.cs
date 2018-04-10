@@ -25,10 +25,13 @@ namespace QnABot.Dialogs
 		[LuisIntent("None")]
 		public async Task NoneIntent(IDialogContext context, IAwaitable<IMessageActivity> message, LuisResult result)
 		{
+			var msg = await message;
+			
+			//await context.PostAsync(context.);
 			if (result.TopScoringIntent.Score > 0.5)
 			{
 				await context.PostAsync("Searching pictures...");
-				context.Call(new SearchDialog("shell huddersfield"), ResumeAfterSearchDialog);
+				context.Call(new SearchDialog(msg.Text), ResumeAfterSearchDialog);
 			}
 			else
 			{
@@ -72,10 +75,21 @@ namespace QnABot.Dialogs
 		{
 			if (result.TopScoringIntent.Score < 0.5)
 			{
-				string strRet = await QnABot.Models.Yahoo.GetStock("msft");
+				string entityValue = "";
+				if (result.Entities.Count > 0)
+				{
+					foreach (EntityRecommendation item in result.Entities)
+					{
+						// Query: Turn on the [light]
+						// item.Type = "HomeAutomation.Device"
+						// item.Entity = "light"
+						entityValue = item.Entity;
+					}
+				}
+				string strRet = await QnABot.Models.Yahoo.GetStock(entityValue);
 
 				// return our reply to the user
-				await context.PostAsync($"Price for msft is {strRet}");
+				await context.PostAsync($"Price for {entityValue} is {strRet}");
 			}
 			else
 			{
