@@ -25,9 +25,17 @@ namespace QnABot.Dialogs
 		[LuisIntent("None")]
 		public async Task NoneIntent(IDialogContext context, IAwaitable<IMessageActivity> message, LuisResult result)
 		{
-			var faqDialog = new BasicQnAMakerDialog();
-			var messageToForward = await message;
-			await context.Forward(faqDialog, AfterFAQDialog, messageToForward, CancellationToken.None);
+			if (result.TopScoringIntent.Score > 0.5)
+			{
+				await context.PostAsync("Searching pictures...");
+				context.Call(new SearchDialog("shell huddersfield"), ResumeAfterSearchDialog);
+			}
+			else
+			{
+				var faqDialog = new BasicQnAMakerDialog();
+				var messageToForward = await message;
+				await context.Forward(faqDialog, AfterFAQDialog, messageToForward, CancellationToken.None);
+			}
 		}
 
 		// Go to https://luis.ai and create a new intent, then train/publish your luis app.
@@ -60,9 +68,18 @@ namespace QnABot.Dialogs
 		}
 
 		[LuisIntent("StockPrice")]
-		public async Task StockPriceIntent(IDialogContext context, LuisResult result)
+		public async Task StockPriceIntent(IDialogContext context, IAwaitable<IMessageActivity> message, LuisResult result)
 		{
-			await this.ShowLuisResult(context, result);
+			if (result.TopScoringIntent.Score < 0.5)
+			{
+				var faqDialog = new BasicQnAMakerDialog();
+				var messageToForward = await message;
+				await context.Forward(faqDialog, AfterFAQDialog, messageToForward, CancellationToken.None);
+			}
+			else
+			{
+				await this.ShowLuisResult(context, result);
+			}
 		}
 
 		private async Task ShowLuisResult(IDialogContext context, LuisResult result)
@@ -72,6 +89,17 @@ namespace QnABot.Dialogs
 		}
 
 		private async Task AfterFAQDialog(IDialogContext context, IAwaitable<IMessageActivity> result)
+		{
+			var messageHandled = await result;
+			//if (!messageHandled)
+			//{
+			await context.PostAsync("Did that answer your question?");
+			//}
+
+			context.Wait(MessageReceived);
+		}
+
+		private async Task ResumeAfterSearchDialog(IDialogContext context, IAwaitable<object> result)
 		{
 			var messageHandled = await result;
 			//if (!messageHandled)
