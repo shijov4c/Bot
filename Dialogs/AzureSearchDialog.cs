@@ -14,12 +14,7 @@ namespace QnABot.Dialogs
 	[Serializable]
 	public class SearchDialog : IDialog<object>
 	{
-		private string searchText = "";
-
-		public SearchDialog(string facet)
-		{
-			searchText = facet;
-		}
+		private string searchText = "huddersfield";
 
 		public async Task StartAsync(IDialogContext context)
 		{

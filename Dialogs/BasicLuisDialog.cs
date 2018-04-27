@@ -30,7 +30,7 @@ namespace QnABot.Dialogs
 			//await context.PostAsync(context.);
 			if (result.TopScoringIntent.Score > 0.5)
 			{
-				context.Call(new SearchDialog(msg.Text), ResumeAfterSearchDialog);
+				context.Call(new SearchDialog(), ResumeAfterSearchDialog);
 			}
 			else
 			{
