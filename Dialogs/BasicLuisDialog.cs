@@ -28,16 +28,17 @@ namespace QnABot.Dialogs
 			var msg = await message;
 			
 			//await context.PostAsync(context.);
-			if (result.TopScoringIntent.Score > 0.5)
-			{
-				context.Call(new SearchDialog(), ResumeAfterSearchDialog);
-			}
-			else
-			{
-				var faqDialog = new BasicQnAMakerDialog();
-				var messageToForward = await message;
-				await context.Forward(faqDialog, AfterFAQDialog, messageToForward, CancellationToken.None);
-			}
+			await context.Forward(new SearchDialog(), ResumeAfterSearchDialog, msg, CancellationToken.None);
+			context.Wait(MessageReceived);
+		}
+
+		[LuisIntent("QnA")]
+		public async Task QnAIntent(IDialogContext context, IAwaitable<IMessageActivity> message, LuisResult result)
+		{
+			var msg = await message;
+			var faqDialog = new BasicQnAMakerDialog();
+			var messageToForward = await message;
+			await context.Forward(faqDialog, AfterFAQDialog, messageToForward, CancellationToken.None);
 			context.Wait(MessageReceived);
 		}
 
