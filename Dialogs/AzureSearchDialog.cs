@@ -28,7 +28,9 @@ namespace QnABot.Dialogs
 			// For more examples of calling search with SearchParameters, see
 			// https://github.com/Azure-Samples/search-dotnet-getting-started/blob/master/DotNetHowTo/DotNetHowTo/Program.cs.  
 
+			await context.PostAsync("Searching pictures...");
 			DocumentSearchResult results = await indexClientForQueries.Documents.SearchAsync(searchText);
+			await context.PostAsync("Search finished");
 			await SendResults(context, results);
 		}
 
