@@ -25,7 +25,6 @@ namespace QnABot.Dialogs
 
 			await context.PostAsync("Searching pictures...");
 			DocumentSearchResult results = await indexClientForQueries.Documents.SearchAsync(searchText);
-			await context.PostAsync("Search finished");
 			await SendResults(context, results);
 		}
 
