@@ -112,7 +112,7 @@ namespace QnABot.Dialogs
 			await context.PostAsync("Did that answer your question?");
 			//}
 
-			//context.Wait(MessageReceived);
+			context.Wait(MessageReceived);
 		}
 
 		private async Task ResumeAfterSearchDialog(IDialogContext context, IAwaitable<object> result)
@@ -123,7 +123,7 @@ namespace QnABot.Dialogs
 			await context.PostAsync("Did that answer your question?");
 			//}
 
-			//context.Wait(MessageReceived);
+			context.Wait(MessageReceived);
 		}
 	}
 }
