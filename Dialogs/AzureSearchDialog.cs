@@ -35,7 +35,7 @@ namespace QnABot.Dialogs
 			if (results.Results.Count == 0)
 			{
 				await context.PostAsync("There were no results found for \"" + searchText + "\".");
-				context.Done<object>(null);
+				//context.Done<object>(null);
 			}
 			else
 			{
@@ -46,7 +46,7 @@ namespace QnABot.Dialogs
 					results.Results.Select(r => ImageMapper.ToSearchHit(r)).ToList().AsReadOnly());
 
 				await context.PostAsync(message);
-				context.Done<object>(null);
+				//context.Done<object>(null);
 			}
 		}
 
