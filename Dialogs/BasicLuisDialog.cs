@@ -31,7 +31,7 @@ namespace QnABot.Dialogs
 			if (result.TopScoringIntent.Score > 0.5)
 			{
 				await context.PostAsync("Searching pictures...");
-				context.Call(new SearchDialog(msg.Text), ResumeAfterSearchDialog);
+				//context.Call(new SearchDialog(msg.Text), ResumeAfterSearchDialog);
 			}
 			else
 			{
@@ -85,7 +85,7 @@ namespace QnABot.Dialogs
 						entityValue = item.Entity;
 					}
 				}
-				string strRet = await QnABot.Models.Yahoo.GetStock(entityValue);
+				string strRet = ""; // await QnABot.Models.Yahoo.GetStock(entityValue);
 
 				// return our reply to the user
 				await context.PostAsync($"Price for {entityValue} is {strRet}");
